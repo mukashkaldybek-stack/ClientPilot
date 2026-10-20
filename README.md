@@ -93,7 +93,21 @@ npm run dev:server
 npm run dev:frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+### 🌐 Access Live Services
+
+- **Frontend Web Application (Port 3000):**
+  - **Main Dashboard:** [http://localhost:3000](http://localhost:3000)
+  - **Clients Management:** [http://localhost:3000/clients](http://localhost:3000/clients)
+  - **Projects Tracker:** [http://localhost:3000/projects](http://localhost:3000/projects)
+  - **Live Work Timers:** [http://localhost:3000/timers](http://localhost:3000/timers)
+  - **Invoice Generator:** [http://localhost:3000/invoices](http://localhost:3000/invoices)
+  - **SaaS Subscriptions:** [http://localhost:3000/subscription](http://localhost:3000/subscription)
+
+- **Backend Hono API (Port 3001):**
+  - **Health Check:** [http://localhost:3001/health](http://localhost:3001/health)
+  - **Clients API:** [http://localhost:3001/api/clients](http://localhost:3001/api/clients)
+  - **Projects API:** [http://localhost:3001/api/projects](http://localhost:3001/api/projects)
+  - **Subscriptions API:** [http://localhost:3001/api/subscription](http://localhost:3001/api/subscription)
 
 ---
 

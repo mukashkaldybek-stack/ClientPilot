@@ -1,0 +1,15 @@
+{
+  "name": "clientpilot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ClientPilot - Micro-SaaS for Freelancers",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:server": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "test": "npm --prefix backend run test",
+    "prisma:generate": "npx prisma generate",
+    "prisma:push": "npx prisma db push",
+    "prisma:validate": "npx prisma validate"
+  }
+}

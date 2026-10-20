@@ -1,0 +1,162 @@
+[
+  {
+    "planned": 1,
+    "real": 1,
+    "title": "[mvp] Scaffold Next.js frontend workspace",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/1"
+  },
+  {
+    "planned": 2,
+    "real": 2,
+    "title": "[mvp] Build frontend UI with mockService",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/2"
+  },
+  {
+    "planned": 3,
+    "real": 3,
+    "title": "[mvp] Define OpenAPI contract",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/3"
+  },
+  {
+    "planned": 4,
+    "real": 4,
+    "title": "[mvp] Scaffold Hono backend server",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/4"
+  },
+  {
+    "planned": 5,
+    "real": 5,
+    "title": "[mvp] In-memory backend: Client CRUD",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/5"
+  },
+  {
+    "planned": 6,
+    "real": 6,
+    "title": "[mvp] In-memory backend: Project CRUD",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/6"
+  },
+  {
+    "planned": 7,
+    "real": 7,
+    "title": "[mvp] In-memory backend: Timer start/stop",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/7"
+  },
+  {
+    "planned": 8,
+    "real": 8,
+    "title": "[mvp] In-memory backend: Invoice generation",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/8"
+  },
+  {
+    "planned": 9,
+    "real": 9,
+    "title": "[mvp] Add Prisma SQLite schema",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/9"
+  },
+  {
+    "planned": 10,
+    "real": 10,
+    "title": "[mvp] SQLite backend: Client CRUD",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/10"
+  },
+  {
+    "planned": 11,
+    "real": 11,
+    "title": "[mvp] SQLite backend: Project CRUD",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/11"
+  },
+  {
+    "planned": 12,
+    "real": 12,
+    "title": "[mvp] SQLite backend: Timer start/stop",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/12"
+  },
+  {
+    "planned": 13,
+    "real": 13,
+    "title": "[mvp] SQLite backend: Invoice generation",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/13"
+  },
+  {
+    "planned": 14,
+    "real": 14,
+    "title": "[mvp] Connect frontend to backend for clients and projects",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/14"
+  },
+  {
+    "planned": 15,
+    "real": 15,
+    "title": "[mvp] Connect frontend to backend for timers and invoices",
+    "labels": "mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/15"
+  },
+  {
+    "planned": 16,
+    "real": 16,
+    "title": "[mvp] [user-test-bug] Timer API crashes when project_id is missing",
+    "labels": "mvp,user-test-bug",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/16"
+  },
+  {
+    "planned": 17,
+    "real": 17,
+    "title": "[mvp] [user-test-bug] Invoice generation fails with special characters",
+    "labels": "mvp,user-test-bug",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/17"
+  },
+  {
+    "planned": 18,
+    "real": 18,
+    "title": "[post-mvp] CI pipeline and Vercel auto-deploy",
+    "labels": "post-mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/18"
+  },
+  {
+    "planned": 19,
+    "real": 19,
+    "title": "[post-mvp] Integrate Stripe for B2B subscriptions",
+    "labels": "post-mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/19"
+  },
+  {
+    "planned": 20,
+    "real": 20,
+    "title": "[post-mvp] Add NextAuth/Clerk for multi-tenant authentication",
+    "labels": "post-mvp",
+    "status": "OPEN",
+    "url": "https://github.com/mukashkaldybek-stack/ClientPilot/issues/20"
+  }
+]

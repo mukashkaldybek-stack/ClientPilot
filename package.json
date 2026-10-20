@@ -8,8 +8,18 @@
     "dev:server": "npm --prefix backend run dev",
     "build:frontend": "npm --prefix frontend run build",
     "test": "npm --prefix backend run test",
-    "prisma:generate": "npx prisma generate",
-    "prisma:push": "npx prisma db push",
-    "prisma:validate": "npx prisma validate"
+    "seed": "tsx scripts/seed.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:validate": "prisma validate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0",
+    "tsx": "^4.19.2",
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.2"
   }
 }

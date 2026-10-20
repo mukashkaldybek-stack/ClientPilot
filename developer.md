@@ -55,8 +55,15 @@ This log documents the iterative implementation of ClientPilot through 5 mandato
   - Automated tests via Vitest in `backend/test/api.test.ts` verifying all endpoints (100% pass rate).
 
 ### Iteration 4: SQLite Database with Prisma ORM
-- **Status:** Pending Execution
-- **Deliverables:** `prisma/schema.prisma` with SQLite provider. Models: `Client`, `Project`, `TimeEntry`, `Invoice`. Database push, seed scripts, and Prisma repository layer replacing in-memory stores.
+- **Status:** COMPLETED ✅
+- **Deliverables:**
+  - Prisma schema in `prisma/schema.prisma` configured with SQLite provider (`prisma/dev.db`).
+  - Relational schema with cascade rules: `Client` 1:N `Project` 1:N `TimeEntry`, `Project` 1:N `Invoice`.
+  - Database schema synchronized using `npx prisma db push`.
+  - Realistic database seed script in `scripts/seed.ts` seeding clients, projects, time entries, and invoices.
+  - `PrismaStore` in `backend/src/store/prismaStore.ts` implementing `IDataStore` with persistent SQLite queries.
+  - Added HTML escaping & internationalization sanitizer in `backend/src/utils/sanitize.ts`.
+  - Comprehensive automated test suite in `backend/test/prisma_and_regressions.test.ts` verifying real persistent SQLite transactions and bug regressions (11/11 tests passing).
 
 ### Iteration 5: Frontend + Backend Integration & Verification
 - **Status:** Pending Execution

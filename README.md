@@ -1,6 +1,6 @@
 # ClientPilot ⚡
 
-> **A high-productivity micro-SaaS for freelancers and independent consultants.**  
+> **A high-productivity micro-SaaS for freelancers and independent software consultants.**  
 > Effortlessly manage clients, track project hours with real-time timers, and generate itemized invoices directly from tracked time.
 
 ---
@@ -15,24 +15,27 @@
 |   +---------------------------------------------------------------------------+   |
 |   |                        FRONTEND (Next.js 14 App Router)                   |   |
 |   |  - Modern Dark-Slate Design System (Tailwind CSS, Glassmorphism)          |   |
-|   |  - Responsive Layout with Global Active Timer Bar                         |   |
-|   |  - Views: Dashboard | Clients | Projects | Time Tracker | Invoices         |   |
-|   |  - Client Layer: Dual Mode (mockService.ts <---> Real API Client)         |   |
+|   |  - Persistent Navigation: Dashboard | Clients | Projects | Timers | Invoices|   |
+|   |  - Global Sticky Active Timer Bar with live 1s ticker                     |   |
+|   |  - Dual Mode Client Architecture:                                         |   |
+|   |      * mockService.ts (Browser storage fallback / Standalone demo)        |   |
+|   |      * api.ts (Live Hono Backend Client with SQLite persistence)          |   |
 |   +-------------------------------------+-------------------------------------+   |
 |                                         |                                         |
 |                                    HTTP / JSON                                    |
 |                                         |                                         |
 |   +-------------------------------------+-------------------------------------+   |
 |   |                         BACKEND API (Hono TypeScript)                     |   |
-|   |  - Ultra-fast Hono Server running on Node.js                              |   |
+|   |  - Ultra-fast Hono Server running on Node.js via @hono/node-server        |   |
 |   |  - Endpoints:                                                             |   |
-|   |      * /health                  -> Server health status                   |   |
-|   |      * /api/clients             -> Client CRUD                            |   |
-|   |      * /api/projects            -> Project CRUD (linked to Clients)       |   |
-|   |      * /api/timers              -> Start / Stop / List active & logs      |   |
-|   |      * /api/invoices            -> Generate & List invoices               |   |
-|   |  - Middleware: CORS, Request Validation, Error Handler                    |   |
-|   |  - Architecture: Repositories (In-Memory <---> Prisma SQLite)             |   |
+|   |      * GET  /health                  -> Service health & timestamp        |   |
+|   |      * CRUD /api/clients             -> Client management                 |   |
+|   |      * CRUD /api/projects            -> Projects linked to clients        |   |
+|   |      * CRUD /api/timers              -> Start (422 guard), Stop, Log      |   |
+|   |      * POST /api/invoices/generate   -> Unbilled hours billing engine     |   |
+|   |      * CRUD /api/invoices            -> State tracking & HTML preview     |   |
+|   |  - Middleware: CORS, Request Validation, Error Handler, Logger            |   |
+|   |  - Pluggable Repository Pattern: IDataStore (InMemoryStore <-> PrismaStore) |   |
 |   +-------------------------------------+-------------------------------------+   |
 |                                         |                                         |
 |                                     Prisma ORM                                    |
@@ -52,7 +55,7 @@
 ## 🚀 Quick Setup & Installation
 
 ### Prerequisites
-- **Node.js**: v18+ (tested on Node v24.20.0)
+- **Node.js**: v18+ (tested on Node v24.20.0 LTS)
 - **npm**: v9+ (or `npm.cmd` on Windows)
 
 ### 1. Clone & Install Dependencies
@@ -60,30 +63,33 @@
 git clone https://github.com/mukashkaldybek-stack/ClientPilot.git
 cd ClientPilot
 
-# Install root & backend dependencies
+# Install root dependencies (Prisma, TSX, tools)
 npm install
+
+# Install backend dependencies
+cd backend && npm install && cd ..
 
 # Install frontend dependencies
 cd frontend && npm install && cd ..
 ```
 
-### 2. Database Setup (Prisma + SQLite)
+### 2. Database Synchronization & Seeding
 ```bash
-# Push Prisma schema to SQLite
-npx prisma db push
+# Push Prisma schema to SQLite (creates prisma/dev.db)
+npm run prisma:push
 
-# (Optional) Seed sample data
+# Seed database with realistic freelance dataset
 npm run seed
 ```
 
-### 3. Run the Development Servers
-In two terminal tabs or concurrently:
+### 3. Run Development Servers
+In two separate terminal tabs:
 
 ```bash
 # Terminal 1: Backend Hono API (port 3001)
 npm run dev:server
 
-# Terminal 2: Frontend Next.js (port 3000)
+# Terminal 2: Frontend Next.js Web App (port 3000)
 npm run dev:frontend
 ```
 
@@ -93,35 +99,64 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🧪 Testing Summary
 
-To run backend unit, HTTP, and regression test suites:
+To run the complete automated test suite:
 ```bash
-# Run all automated tests
 npm test
 ```
 
-### Regression Test Guards
-- `test_timer_start_requires_project_id`: Asserts that `POST /api/timers/start` with missing `project_id` returns HTTP `422 Unprocessable Entity` rather than 500 crash.
-- `test_invoice_generation_supports_special_characters`: Asserts that invoice generation for clients containing `é`, `&`, `<`, `>`, and quotes correctly escapes HTML entities and generates without error.
+### Test Suite Results: 100% Pass Rate (11/11 tests)
+- **`backend/test/api.test.ts` (6 tests):**
+  - `GET /health` returns 200 OK
+  - `GET /api/clients` returns client list
+  - `POST /api/clients` creates client and handles validation errors
+  - `GET /api/projects` and `POST /api/projects` enforces client relationship
+  - `POST /api/timers/start` and `POST /api/timers/stop` tracks work sessions
+  - `POST /api/invoices/generate` calculates total from time entries and hourly rates
+- **`backend/test/prisma_and_regressions.test.ts` (5 tests):**
+  - Persists Client CRUD operations in SQLite
+  - Persists Project CRUD operations in SQLite with foreign key linkage
+  - Persists Timer start and stop sessions in SQLite
+  - **Regression Test 1:** `test_timer_start_requires_project_id` (Asserts HTTP 422 for omitted, null, or empty `project_id`)
+  - **Regression Test 2:** `test_invoice_generation_supports_special_characters` (Asserts international characters like `é`, `&`, `<`, `>`, `"` are preserved in JSON and safely escaped in HTML preview)
 
 ---
 
-## 🔄 AI-Native Iteration Summary
+## 🔄 AI-Native Iterations Summary
 
-1. **Iteration 1: Frontend-Only (mockService):**  
-   Built complete responsive UI for Dashboard, Clients, Projects, Timers, and Invoices running entirely in-browser with simulated asynchronous operations.
+1. **Iteration 1: Frontend-Only with `mockService`:**  
+   Built full responsive frontend application shell with dark slate design system, persistent sidebar navigation, real-time timer ticking bar, and realistic mock data service.
 2. **Iteration 2: OpenAPI Contract (`docs/openapi.yml`):**  
-   Standardized all API models, status codes, query filters, and error schemas.
+   Defined standardized OpenAPI 3.0 specification covering all endpoints, parameters, schemas, and validation error models.
 3. **Iteration 3: In-Memory Hono Backend:**  
-   Implemented lightning-fast Hono API server with in-memory stores and request validation.
-4. **Iteration 4: SQLite Database & Prisma ORM:**  
-   Migrated from in-memory to persistent SQLite storage (`prisma/dev.db`), ensuring data survives server restarts.
+   Built TypeScript Hono backend with CORS, health monitoring, and in-memory repositories for Clients, Projects, Timers, and Invoices.
+4. **Iteration 4: SQLite Database with Prisma ORM:**  
+   Created relational schema (`prisma/schema.prisma`), pushed tables to `prisma/dev.db`, created seed script (`scripts/seed.ts`), and implemented `PrismaStore` with full persistence.
 5. **Iteration 5: Full Frontend-Backend Integration:**  
-   Wired Next.js client to Hono API server, verified live end-to-end user workflows and verified all test suites.
+   Connected frontend to Hono API server, executed automated end-to-end integration flow (`scripts/test_e2e_flow.ts`), and verified persistence.
 
 ---
 
-## 📋 GitHub Issues & Tracking
-For a complete audit of all 20 GitHub issues, see [GITHUB_ISSUES.md](file:///c:/Users/77010/Desktop/ass1part2/GITHUB_ISSUES.md).
-- Issues #1 – #15: MVP Implementations (Closed ✅)
-- Issues #16 – #17: User Test Bugs (Closed ✅)
-- Issues #18 – #20: Post-MVP Roadmap (Open ⏳)
+## 📋 GitHub Issue Status
+
+| Planned # | Real # | Title | Labels | Status |
+|:---------:|:------:|-------|--------|:------:|
+| 1 | 1 | [mvp] Scaffold Next.js frontend workspace | mvp | CLOSED ✅ |
+| 2 | 2 | [mvp] Build frontend UI with mockService | mvp | CLOSED ✅ |
+| 3 | 3 | [mvp] Define OpenAPI contract | mvp | CLOSED ✅ |
+| 4 | 4 | [mvp] Scaffold Hono backend server | mvp | CLOSED ✅ |
+| 5 | 5 | [mvp] In-memory backend: Client CRUD | mvp | CLOSED ✅ |
+| 6 | 6 | [mvp] In-memory backend: Project CRUD | mvp | CLOSED ✅ |
+| 7 | 7 | [mvp] In-memory backend: Timer start/stop | mvp | CLOSED ✅ |
+| 8 | 8 | [mvp] In-memory backend: Invoice generation | mvp | CLOSED ✅ |
+| 9 | 9 | [mvp] Add Prisma SQLite schema | mvp | CLOSED ✅ |
+| 10 | 10 | [mvp] SQLite backend: Client CRUD | mvp | CLOSED ✅ |
+| 11 | 11 | [mvp] SQLite backend: Project CRUD | mvp | CLOSED ✅ |
+| 12 | 12 | [mvp] SQLite backend: Timer start/stop | mvp | CLOSED ✅ |
+| 13 | 13 | [mvp] SQLite backend: Invoice generation | mvp | CLOSED ✅ |
+| 14 | 14 | [mvp] Connect frontend to backend for clients and projects | mvp | CLOSED ✅ |
+| 15 | 15 | [mvp] Connect frontend to backend for timers and invoices | mvp | CLOSED ✅ |
+| 16 | 16 | [mvp] [user-test-bug] Timer API crashes when project_id is missing | mvp, user-test-bug | CLOSED ✅ |
+| 17 | 17 | [mvp] [user-test-bug] Invoice generation fails with special characters | mvp, user-test-bug | CLOSED ✅ |
+| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | OPEN ⏳ |
+| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | OPEN ⏳ |
+| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | OPEN ⏳ |

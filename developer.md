@@ -32,8 +32,17 @@ This log documents the iterative implementation of ClientPilot through 5 mandato
   - Production build verification (`npm run build` passed cleanly across all 5 routes).
 
 ### Iteration 2: OpenAPI Contract Specification (`docs/openapi.yml`)
-- **Status:** Pending Execution
-- **Deliverables:** Comprehensive OpenAPI 3.0 specification covering `/api/clients`, `/api/projects`, `/api/timers`, `/api/invoices`, error payloads, and data models.
+- **Status:** COMPLETED ✅
+- **Deliverables:**
+  - Standardized OpenAPI 3.0.3 contract in `docs/openapi.yml`.
+  - Detailed endpoints:
+    - `/health`: System health monitor.
+    - `/api/clients` and `/api/clients/{id}`: CRUD operations.
+    - `/api/projects` and `/api/projects/{id}`: Linked project CRUD with client validation.
+    - `/api/timers`, `/api/timers/start`, `/api/timers/stop`, `/api/timers/{id}`: Time tracking engine with explicit 422 validation specification for missing `project_id`.
+    - `/api/invoices`, `/api/invoices/generate`, `/api/invoices/{id}`, `/api/invoices/{id}/status`: Billing aggregation and state management.
+  - Full JSON schemas for inputs, outputs, `ValidationErrorResponse`, and `ErrorResponse`.
+  - Direct 1:1 parity between `docs/openapi.yml` and `frontend/src/services/mockService.ts`.
 
 ### Iteration 3: In-Memory Hono API Implementation
 - **Status:** Pending Execution

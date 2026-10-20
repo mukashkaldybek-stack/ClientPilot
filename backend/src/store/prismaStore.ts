@@ -23,8 +23,9 @@ export class PrismaStore implements IDataStore {
   }
 
   // --- CLIENTS ---
-  async getClients(): Promise<Client[]> {
+  async getClients(businessId?: string): Promise<Client[]> {
     const list = await this.prisma.client.findMany({
+      where: businessId ? { businessId } : undefined,
       orderBy: { createdAt: 'desc' },
     });
     return list.map((c) => ({
@@ -40,8 +41,13 @@ export class PrismaStore implements IDataStore {
     }));
   }
 
-  async getClient(id: string): Promise<Client | null> {
-    const c = await this.prisma.client.findUnique({ where: { id } });
+  async getClient(id: string, businessId?: string): Promise<Client | null> {
+    const c = await this.prisma.client.findFirst({
+      where: {
+        id,
+        ...(businessId ? { businessId } : {}),
+      },
+    });
     if (!c) return null;
     return {
       id: c.id,
@@ -56,9 +62,10 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async createClient(data: ClientCreateInput): Promise<Client> {
+  async createClient(data: ClientCreateInput, businessId?: string): Promise<Client> {
     const c = await this.prisma.client.create({
       data: {
+        businessId: businessId || 'default-biz',
         name: data.name,
         email: data.email,
         company: data.company || null,
@@ -80,8 +87,13 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async updateClient(id: string, data: ClientUpdateInput): Promise<Client | null> {
+  async updateClient(id: string, data: ClientUpdateInput, businessId?: string): Promise<Client | null> {
     try {
+      const existing = await this.prisma.client.findFirst({
+        where: { id, ...(businessId ? { businessId } : {}) },
+      });
+      if (!existing) return null;
+
       const c = await this.prisma.client.update({
         where: { id },
         data: {
@@ -109,8 +121,13 @@ export class PrismaStore implements IDataStore {
     }
   }
 
-  async deleteClient(id: string): Promise<boolean> {
+  async deleteClient(id: string, businessId?: string): Promise<boolean> {
     try {
+      const existing = await this.prisma.client.findFirst({
+        where: { id, ...(businessId ? { businessId } : {}) },
+      });
+      if (!existing) return false;
+
       await this.prisma.client.delete({ where: { id } });
       return true;
     } catch {
@@ -119,9 +136,12 @@ export class PrismaStore implements IDataStore {
   }
 
   // --- PROJECTS ---
-  async getProjects(clientId?: string): Promise<Project[]> {
+  async getProjects(clientId?: string, businessId?: string): Promise<Project[]> {
     const list = await this.prisma.project.findMany({
-      where: clientId ? { clientId } : undefined,
+      where: {
+        ...(clientId ? { clientId } : {}),
+        ...(businessId ? { businessId } : {}),
+      },
       include: { client: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -138,9 +158,12 @@ export class PrismaStore implements IDataStore {
     }));
   }
 
-  async getProject(id: string): Promise<Project | null> {
-    const p = await this.prisma.project.findUnique({
-      where: { id },
+  async getProject(id: string, businessId?: string): Promise<Project | null> {
+    const p = await this.prisma.project.findFirst({
+      where: {
+        id,
+        ...(businessId ? { businessId } : {}),
+      },
       include: { client: true },
     });
     if (!p) return null;
@@ -157,9 +180,12 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async createProject(data: ProjectCreateInput): Promise<Project> {
-    const client = await this.prisma.client.findUnique({
-      where: { id: data.client_id },
+  async createProject(data: ProjectCreateInput, businessId?: string): Promise<Project> {
+    const client = await this.prisma.client.findFirst({
+      where: {
+        id: data.client_id,
+        ...(businessId ? { businessId } : {}),
+      },
     });
     if (!client) {
       throw new Error(`Client with id '${data.client_id}' does not exist.`);
@@ -167,6 +193,7 @@ export class PrismaStore implements IDataStore {
 
     const p = await this.prisma.project.create({
       data: {
+        businessId: businessId || 'default-biz',
         clientId: data.client_id,
         name: data.name,
         description: data.description || null,
@@ -189,11 +216,16 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async updateProject(id: string, data: ProjectUpdateInput): Promise<Project | null> {
+  async updateProject(id: string, data: ProjectUpdateInput, businessId?: string): Promise<Project | null> {
     try {
+      const existing = await this.prisma.project.findFirst({
+        where: { id, ...(businessId ? { businessId } : {}) },
+      });
+      if (!existing) return null;
+
       if (data.client_id) {
-        const client = await this.prisma.client.findUnique({
-          where: { id: data.client_id },
+        const client = await this.prisma.client.findFirst({
+          where: { id: data.client_id, ...(businessId ? { businessId } : {}) },
         });
         if (!client) {
           throw new Error(`Client with id '${data.client_id}' does not exist.`);
@@ -228,8 +260,13 @@ export class PrismaStore implements IDataStore {
     }
   }
 
-  async deleteProject(id: string): Promise<boolean> {
+  async deleteProject(id: string, businessId?: string): Promise<boolean> {
     try {
+      const existing = await this.prisma.project.findFirst({
+        where: { id, ...(businessId ? { businessId } : {}) },
+      });
+      if (!existing) return false;
+
       await this.prisma.project.delete({ where: { id } });
       return true;
     } catch {
@@ -238,9 +275,12 @@ export class PrismaStore implements IDataStore {
   }
 
   // --- TIMERS ---
-  async getTimers(projectId?: string): Promise<TimeEntry[]> {
+  async getTimers(projectId?: string, businessId?: string): Promise<TimeEntry[]> {
     const list = await this.prisma.timeEntry.findMany({
-      where: projectId ? { projectId } : undefined,
+      where: {
+        ...(projectId ? { projectId } : {}),
+        ...(businessId ? { businessId } : {}),
+      },
       include: { project: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -258,9 +298,12 @@ export class PrismaStore implements IDataStore {
     }));
   }
 
-  async getActiveTimer(): Promise<TimeEntry | null> {
+  async getActiveTimer(businessId?: string): Promise<TimeEntry | null> {
     const t = await this.prisma.timeEntry.findFirst({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        ...(businessId ? { businessId } : {}),
+      },
       include: { project: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -279,7 +322,7 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async startTimer(data: TimerStartInput): Promise<TimeEntry> {
+  async startTimer(data: TimerStartInput, businessId?: string): Promise<TimeEntry> {
     if (!data.project_id || typeof data.project_id !== 'string' || data.project_id.trim() === '') {
       const err = new Error('project_id is required to start a timer');
       (err as unknown as { status: number; field: string }).status = 422;
@@ -287,8 +330,8 @@ export class PrismaStore implements IDataStore {
       throw err;
     }
 
-    const prj = await this.prisma.project.findUnique({
-      where: { id: data.project_id },
+    const prj = await this.prisma.project.findFirst({
+      where: { id: data.project_id, ...(businessId ? { businessId } : {}) },
     });
     if (!prj) {
       const err = new Error(`Project '${data.project_id}' not found`);
@@ -296,9 +339,8 @@ export class PrismaStore implements IDataStore {
       throw err;
     }
 
-    // Stop currently running active timers
     const activeTimers = await this.prisma.timeEntry.findMany({
-      where: { isActive: true },
+      where: { isActive: true, ...(businessId ? { businessId } : {}) },
     });
     const now = new Date();
     for (const active of activeTimers) {
@@ -315,6 +357,7 @@ export class PrismaStore implements IDataStore {
 
     const newTimer = await this.prisma.timeEntry.create({
       data: {
+        businessId: businessId || 'default-biz',
         projectId: data.project_id.trim(),
         description: data.description?.trim() || 'Focus Session',
         startTime: now,
@@ -339,11 +382,11 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async stopTimer(id?: string): Promise<TimeEntry | null> {
+  async stopTimer(id?: string, businessId?: string): Promise<TimeEntry | null> {
     const target = id
-      ? await this.prisma.timeEntry.findUnique({ where: { id }, include: { project: true } })
+      ? await this.prisma.timeEntry.findFirst({ where: { id, ...(businessId ? { businessId } : {}) }, include: { project: true } })
       : await this.prisma.timeEntry.findFirst({
-          where: { isActive: true },
+          where: { isActive: true, ...(businessId ? { businessId } : {}) },
           include: { project: true },
           orderBy: { createdAt: 'desc' },
         });
@@ -377,8 +420,13 @@ export class PrismaStore implements IDataStore {
     };
   }
 
-  async deleteTimer(id: string): Promise<boolean> {
+  async deleteTimer(id: string, businessId?: string): Promise<boolean> {
     try {
+      const existing = await this.prisma.timeEntry.findFirst({
+        where: { id, ...(businessId ? { businessId } : {}) },
+      });
+      if (!existing) return false;
+
       await this.prisma.timeEntry.delete({ where: { id } });
       return true;
     } catch {
@@ -387,8 +435,9 @@ export class PrismaStore implements IDataStore {
   }
 
   // --- INVOICES ---
-  async getInvoices(): Promise<Invoice[]> {
+  async getInvoices(businessId?: string): Promise<Invoice[]> {
     const list = await this.prisma.invoice.findMany({
+      where: businessId ? { businessId } : undefined,
       include: { project: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -425,9 +474,9 @@ export class PrismaStore implements IDataStore {
     });
   }
 
-  async getInvoice(id: string): Promise<Invoice | null> {
-    const i = await this.prisma.invoice.findUnique({
-      where: { id },
+  async getInvoice(id: string, businessId?: string): Promise<Invoice | null> {
+    const i = await this.prisma.invoice.findFirst({
+      where: { id, ...(businessId ? { businessId } : {}) },
       include: { project: true },
     });
     if (!i) return null;
@@ -463,15 +512,15 @@ export class PrismaStore implements IDataStore {
     return inv;
   }
 
-  async generateInvoice(data: InvoiceGenerateInput): Promise<Invoice> {
+  async generateInvoice(data: InvoiceGenerateInput, businessId?: string): Promise<Invoice> {
     if (!data.project_id) {
       const err = new Error('project_id is required');
       (err as unknown as { status: number }).status = 400;
       throw err;
     }
 
-    const project = await this.prisma.project.findUnique({
-      where: { id: data.project_id },
+    const project = await this.prisma.project.findFirst({
+      where: { id: data.project_id, ...(businessId ? { businessId } : {}) },
       include: { client: true },
     });
     if (!project) {
@@ -482,12 +531,12 @@ export class PrismaStore implements IDataStore {
 
     const client = project.client;
 
-    // Retrieve unbilled completed entries
     const unbilled = await this.prisma.timeEntry.findMany({
       where: {
         projectId: project.id,
         isBilled: false,
         isActive: false,
+        ...(businessId ? { businessId } : {}),
       },
     });
 
@@ -524,7 +573,9 @@ export class PrismaStore implements IDataStore {
     }
 
     const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
-    const count = await this.prisma.invoice.count();
+    const count = await this.prisma.invoice.count({
+      where: businessId ? { businessId } : undefined,
+    });
     const invoiceNumber = `INV-${new Date().getFullYear()}-${String(count + 1).padStart(3, '0')}`;
     const issueDate = new Date().toISOString().split('T')[0];
     const dueDays = data.due_days || 14;
@@ -532,6 +583,7 @@ export class PrismaStore implements IDataStore {
 
     const saved = await this.prisma.invoice.create({
       data: {
+        businessId: businessId || 'default-biz',
         invoiceNumber,
         projectId: project.id,
         clientId: client.id,
@@ -576,14 +628,19 @@ export class PrismaStore implements IDataStore {
     return invoice;
   }
 
-  async updateInvoiceStatus(id: string, status: 'draft' | 'sent' | 'paid'): Promise<Invoice | null> {
+  async updateInvoiceStatus(id: string, status: 'draft' | 'sent' | 'paid', businessId?: string): Promise<Invoice | null> {
     try {
+      const existing = await this.prisma.invoice.findFirst({
+        where: { id, ...(businessId ? { businessId } : {}) },
+      });
+      if (!existing) return null;
+
       const saved = await this.prisma.invoice.update({
         where: { id },
         data: { status },
         include: { project: true },
       });
-      return this.getInvoice(saved.id);
+      return this.getInvoice(saved.id, businessId);
     } catch {
       return null;
     }

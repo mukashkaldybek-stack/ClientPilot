@@ -21,6 +21,6 @@ Live tracking of all 20 GitHub issues for ClientPilot.
 | 15 | 15 | [mvp] Connect frontend to backend for timers and invoices | mvp | CLOSED | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/15) |
 | 16 | 16 | [mvp] [user-test-bug] Timer API crashes when project_id is missing | mvp,user-test-bug | CLOSED | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/16) |
 | 17 | 17 | [mvp] [user-test-bug] Invoice generation fails with special characters | mvp,user-test-bug | CLOSED | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/17) |
-| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | OPEN | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/18) |
-| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | OPEN | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/19) |
-| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | OPEN | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/20) |
+| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | CLOSED | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/18) |
+| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | CLOSED | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/19) |
+| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | CLOSED | [Link](https://github.com/mukashkaldybek-stack/ClientPilot/issues/20) |

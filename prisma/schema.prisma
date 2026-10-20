@@ -10,6 +10,7 @@ generator client {
 
 model Client {
   id         String    @id @default(cuid())
+  businessId String    @default("default-biz")
   name       String
   email      String
   company    String?
@@ -24,6 +25,7 @@ model Client {
 
 model Project {
   id          String      @id @default(cuid())
+  businessId  String      @default("default-biz")
   clientId    String
   client      Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
   name        String
@@ -38,6 +40,7 @@ model Project {
 
 model TimeEntry {
   id              String    @id @default(cuid())
+  businessId      String    @default("default-biz")
   projectId       String
   project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   description     String    @default("Focus Session")
@@ -51,6 +54,7 @@ model TimeEntry {
 
 model Invoice {
   id            String   @id @default(cuid())
+  businessId    String   @default("default-biz")
   invoiceNumber String   @unique
   projectId     String
   project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -69,4 +73,16 @@ model Invoice {
   lineItemsJson String
   notes         String?
   createdAt     DateTime @default(now())
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  businessId           String    @unique
+  tier                 String    @default("Starter")
+  status               String    @default("active")
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }

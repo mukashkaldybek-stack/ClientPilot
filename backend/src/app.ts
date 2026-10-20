@@ -6,8 +6,10 @@ import { clientsRouter } from './routes/clients.js';
 import { projectsRouter } from './routes/projects.js';
 import { timersRouter } from './routes/timers.js';
 import { invoicesRouter } from './routes/invoices.js';
+import { subscriptionRouter } from './routes/subscription.js';
+import { authMiddleware } from './middleware/auth.js';
 
-export function createApp(): Hono {
+export function createApp(options?: { enableAuth?: boolean }): Hono {
   const app = new Hono();
 
   // Middleware
@@ -17,9 +19,14 @@ export function createApp(): Hono {
     cors({
       origin: '*',
       allowMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-      allowHeaders: ['Content-Type', 'Authorization'],
+      allowHeaders: ['Content-Type', 'Authorization', 'x-business-id'],
     })
   );
+
+  // Optional global auth enforcement (enabled in multi-tenant mode or when requested)
+  if (options?.enableAuth) {
+    app.use('/api/*', authMiddleware);
+  }
 
   // Error handling
   app.onError((err, c) => {
@@ -40,6 +47,7 @@ export function createApp(): Hono {
   app.route('/', projectsRouter);
   app.route('/', timersRouter);
   app.route('/', invoicesRouter);
+  app.route('/', subscriptionRouter);
 
   return app;
 }

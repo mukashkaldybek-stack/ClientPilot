@@ -104,7 +104,7 @@ To run the complete automated test suite:
 npm test
 ```
 
-### Test Suite Results: 100% Pass Rate (11/11 tests)
+### Test Suite Results: 100% Pass Rate (20/20 tests across 3 suites)
 - **`backend/test/api.test.ts` (6 tests):**
   - `GET /health` returns 200 OK
   - `GET /api/clients` returns client list
@@ -118,6 +118,16 @@ npm test
   - Persists Timer start and stop sessions in SQLite
   - **Regression Test 1:** `test_timer_start_requires_project_id` (Asserts HTTP 422 for omitted, null, or empty `project_id`)
   - **Regression Test 2:** `test_invoice_generation_supports_special_characters` (Asserts international characters like `é`, `&`, `<`, `>`, `"` are preserved in JSON and safely escaped in HTML preview)
+- **`backend/test/post_mvp.test.ts` (9 tests):**
+  - CI workflow verification (`.github/workflows/ci.yml` with lint, test, and build gates)
+  - Vercel configuration verification (`vercel.json`)
+  - Stripe B2B subscription tier fetching (`Starter`, `Pro`, `Agency`)
+  - Stripe checkout session creation and invalid tier rejection
+  - Stripe webhook simulation syncing subscription tier to SQLite
+  - Stripe customer billing portal link generation
+  - Multi-tenant 401 unauthenticated request enforcement
+  - Authenticated Bearer token access authorization
+  - Multi-tenant row-level data isolation between distinct businesses
 
 ---
 
@@ -157,6 +167,6 @@ npm test
 | 15 | 15 | [mvp] Connect frontend to backend for timers and invoices | mvp | CLOSED ✅ |
 | 16 | 16 | [mvp] [user-test-bug] Timer API crashes when project_id is missing | mvp, user-test-bug | CLOSED ✅ |
 | 17 | 17 | [mvp] [user-test-bug] Invoice generation fails with special characters | mvp, user-test-bug | CLOSED ✅ |
-| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | OPEN ⏳ |
-| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | OPEN ⏳ |
-| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | OPEN ⏳ |
+| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | CLOSED ✅ |
+| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | CLOSED ✅ |
+| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | CLOSED ✅ |

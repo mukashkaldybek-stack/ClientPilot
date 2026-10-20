@@ -1,0 +1,46 @@
+name: ClientPilot CI / CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-and-test:
+    name: Build, Validate & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm ci || npm install
+
+      - name: Install Backend Dependencies
+        run: cd backend && npm install && cd ..
+
+      - name: Install Frontend Dependencies
+        run: cd frontend && npm install && cd ..
+
+      - name: Validate Prisma Schema
+        run: npx prisma validate
+
+      - name: Push SQLite Schema
+        run: npx prisma db push
+
+      - name: Run Backend API & Regression Tests
+        run: npm test
+
+      - name: Build Next.js Frontend
+        run: npm run build:frontend
+        env:
+          NEXT_PUBLIC_USE_BACKEND: 'true'
+          NEXT_PUBLIC_API_URL: 'http://localhost:3001'

@@ -22,6 +22,7 @@ export function Sidebar() {
     { name: 'Projects', href: '/projects', icon: Briefcase },
     { name: 'Time Tracker', href: '/timers', icon: Clock },
     { name: 'Invoices', href: '/invoices', icon: FileText },
+    { name: 'Subscription', href: '/subscription', icon: ShieldCheck },
   ];
 
   return (

@@ -91,3 +91,35 @@ This log documents the iterative implementation of ClientPilot through 5 mandato
 - **Root Cause Analysis:** Rendering printable HTML invoices with raw string interpolation of client names containing `&`, `<`, `>`, quotes, or accented characters could corrupt the HTML DOM or fail serialization.
 - **Remediation:** Add sanitization utility `escapeHtml` to escape dangerous HTML entities while keeping UTF-8 characters intact for display and PDF rendering.
 - **Regression Test:** `test_invoice_generation_supports_special_characters`.
+
+---
+
+## Post-MVP Implementation Records (Issues #18, #19, #20)
+
+### Issue #18: CI/CD Pipeline & Vercel Deployment
+- **Status:** COMPLETED ✅
+- **Deliverables:**
+  - GitHub Actions Workflow: `.github/workflows/ci.yml` running on push/PR to `main`.
+  - Workflow steps: repository checkout (`actions/checkout@v4`), Node 20 LTS setup (`actions/setup-node@v4`), dependency caching, Prisma schema validation (`npx prisma validate`), SQLite table deployment (`npx prisma db push`), full automated testing (`npm test`), and Next.js frontend production build (`npm run build:frontend`).
+  - Vercel Deployment Configuration: `vercel.json` configuring framework `nextjs`, root directory `frontend/`, and clean routing for production and preview environments.
+
+### Issue #19: Stripe B2B Subscriptions
+- **Status:** COMPLETED ✅
+- **Deliverables:**
+  - Subscription Tiers: Starter ($12/mo), Pro ($29/mo), and Agency ($79/mo).
+  - Backend API in `backend/src/routes/subscription.ts`:
+    - `GET /api/subscription`: Returns active subscription details and available pricing plans.
+    - `POST /api/subscription/checkout`: Creates simulated Stripe checkout session with session URL and tier metadata.
+    - `POST /api/subscription/webhook`: Ingests `checkout.session.completed` events and synchronizes subscription tier and customer ID to SQLite.
+    - `GET /api/subscription/portal`: Generates Stripe customer billing portal link.
+  - SQLite Model in `prisma/schema.prisma`: `Subscription` entity storing `businessId`, `tier`, `status`, `stripeCustomerId`, and `stripeSubscriptionId`.
+  - Frontend Subscription Page in `frontend/src/app/subscription/page.tsx`: Interactive tier selection cards, monthly/annual toggles, feature checklist, and checkout CTA wired to backend API.
+
+### Issue #20: Multi-Tenant Authentication & Row-Level Isolation
+- **Status:** COMPLETED ✅
+- **Deliverables:**
+  - Authentication Middleware in `backend/src/middleware/auth.ts`: Rejects unauthenticated requests with HTTP 401 (`Authentication required`), extracts Bearer JWT tokens or business identifiers, and injects `businessId` into request context.
+  - Multi-Tenant Schema: Added `businessId` indexed column to `Client`, `Project`, `TimeEntry`, `Invoice`, and `Subscription` models in `prisma/schema.prisma`.
+  - Row-Level Tenant Isolation in `backend/src/store/prismaStore.ts`: All CRUD operations enforce `where: { businessId }` filtering, preventing cross-tenant data leakage between freelance workspaces.
+  - Comprehensive Test Suite in `backend/test/post_mvp.test.ts`: 9 automated tests verifying CI config, Stripe checkout, webhook database synchronization, 401 unauthenticated blocking, and strict row-level isolation between distinct business IDs.
+

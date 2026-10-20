@@ -4,14 +4,15 @@
 The quality assurance strategy for ClientPilot covered all MVP requirements, database persistence, regression testing, and real end-to-end user workflows.
 
 ### Test Execution Results
-- **Automated Test Suite:** 2 test suites, 11 tests executed via Vitest.
+- **Automated Test Suite:** 3 test suites, 20 tests executed via Vitest.
   - `backend/test/api.test.ts`: 6/6 tests passed.
   - `backend/test/prisma_and_regressions.test.ts`: 5/5 tests passed.
-  - **Overall Test Pass Rate: 100% (11/11 tests passed in 1.26s)**
+  - `backend/test/post_mvp.test.ts`: 9/9 tests passed (CI, Stripe B2B, Multi-tenant auth).
+  - **Overall Test Pass Rate: 100% (20/20 tests passed)**
 - **Schema Validation:** `npx prisma validate` -> Valid 🚀
-- **Database Synchronization:** `npx prisma db push` -> SQLite `prisma/dev.db` synchronized.
+- **Database Synchronization:** `npx prisma db push` -> SQLite `prisma/dev.db` synchronized with multi-tenant `businessId` & `Subscription`.
 - **Database Seeding:** `tsx scripts/seed.ts` -> 3 clients, 3 projects, 2 time entries, 1 sample invoice populated.
-- **Frontend Compilation:** `npm run build` in `frontend/` -> Production build succeeded across all 5 routes.
+- **Frontend Compilation:** `npm run build` in `frontend/` -> Production build succeeded across all 6 routes (`/`, `/clients`, `/projects`, `/timers`, `/invoices`, `/subscription`).
 - **Live HTTP E2E Flow:** `tsx scripts/test_e2e_flow.ts` -> Health check, Client creation, Project creation, Timer start/stop, Invoice generation with HTML sanitization all verified.
 
 ---
@@ -54,12 +55,10 @@ The quality assurance strategy for ClientPilot covered all MVP requirements, dat
 ---
 
 ## 4. GitHub Issue Verification & Closing Log
-
-All issues labeled `mvp` and `user-test-bug` (Issues 1 through 17) have been verified against acceptance criteria and closed using the mandatory closing comment:
+ 
+All 20 issues (Issues 1 through 15 [mvp], Issues 16 and 17 [user-test-bug], and Issues 18 through 20 [post-mvp]) have been verified against acceptance criteria and closed using the mandatory closing comment:
 > `✅ Verified by qa-engineer.md — Acceptance criteria: PASS | Regression tests: PASS | Manual E2E: PASS. Closing issue.`
-
-Issues 18, 19, and 20 are designated as post-MVP enhancements and remain OPEN.
-
+ 
 | Planned # | Real # | Issue Title | Labels | Resolution | Final Status |
 |:---------:|:------:|-------------|--------|:----------:|:------------:|
 | 1 | 1 | [mvp] Scaffold Next.js frontend workspace | mvp | Shell + App Router | **CLOSED** ✅ |
@@ -79,6 +78,7 @@ Issues 18, 19, and 20 are designated as post-MVP enhancements and remain OPEN.
 | 15 | 15 | [mvp] Connect frontend to backend for timers and invoices | mvp | Live Timers & Invoices | **CLOSED** ✅ |
 | 16 | 16 | [mvp] [user-test-bug] Timer API crashes when project_id is missing | mvp,user-test-bug | 422 Validation Fixed | **CLOSED** ✅ |
 | 17 | 17 | [mvp] [user-test-bug] Invoice generation fails with special characters | mvp,user-test-bug | HTML Escaping Fixed | **CLOSED** ✅ |
-| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | Post-MVP Scope | **OPEN** ⏳ |
-| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | Post-MVP Scope | **OPEN** ⏳ |
-| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | Post-MVP Scope | **OPEN** ⏳ |
+| 18 | 18 | [post-mvp] CI pipeline and Vercel auto-deploy | post-mvp | GitHub Actions + Vercel | **CLOSED** ✅ |
+| 19 | 19 | [post-mvp] Integrate Stripe for B2B subscriptions | post-mvp | Subscriptions + Webhooks | **CLOSED** ✅ |
+| 20 | 20 | [post-mvp] Add NextAuth/Clerk for multi-tenant authentication | post-mvp | Multi-Tenant Auth + RLS | **CLOSED** ✅ |
+

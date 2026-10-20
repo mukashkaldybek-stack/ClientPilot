@@ -66,8 +66,17 @@ This log documents the iterative implementation of ClientPilot through 5 mandato
   - Comprehensive automated test suite in `backend/test/prisma_and_regressions.test.ts` verifying real persistent SQLite transactions and bug regressions (11/11 tests passing).
 
 ### Iteration 5: Frontend + Backend Integration & Verification
-- **Status:** Pending Execution
-- **Deliverables:** Frontend API client connected to backend endpoints. Live data flow from UI to SQLite and back. Real-time timer persistence and invoice calculations verified end-to-end.
+- **Status:** COMPLETED ✅
+- **Deliverables:**
+  - Configured environment variables (`NEXT_PUBLIC_USE_BACKEND=true`, `NEXT_PUBLIC_API_URL=http://localhost:3001`).
+  - Switched frontend service layer (`frontend/src/services/api.ts`) to communicate with the live Hono backend API.
+  - End-to-end automated verification script (`scripts/test_e2e_flow.ts`) executing complete lifecycle:
+    1. System health check.
+    2. Client creation and persistence in SQLite.
+    3. Project creation linked to client in SQLite.
+    4. Active timer start, live work tracking, and timer stop with duration calculation.
+    5. Automatic invoice generation from tracked work sessions with HTML escaping and currency calculation.
+  - Both frontend production build (`npm run build`) and backend tests (11/11 tests) passing without errors.
 
 ---
 
